@@ -2,21 +2,29 @@
 <html>
 <head>
   <style>
+    *{
+    -moz-user-select: none;
+    -o-user-select:none;
+    -khtml-user-select:none;
+    -webkit-user-select:none;
+    -ms-user-select:none;
+    user-select:none;
+    }
     body {
     background-color: black;
 
-}
+    }
     .grid {
       display: grid;
       grid-template-columns: repeat(16, 60px); /* 20px per cell */
       grid-template-rows: repeat(16, 60px);
       width: 960px;
       height: 960px;
-      /* background-image: url(./wood.jpg); */
-      position:absolute;
+    position:absolute;
     top:50%;
     left:50%;
     margin:-480px 0px 0px -480px;
+    zoom: 0.75;
     }
     .cell {
       width: 60px;
@@ -26,31 +34,44 @@
       font-size: 50px;
       justify-content: center;
       align-items: center;
+      font-family: Arial
+    }
+    .title{
+        font-size: 50px;
+        width: 300px;
+      height: 60px;
+        color: gray;
+        position:absolute;
+    top:50%;
+    left:50%;
+    margin:-480px 0px 0px -150px;
+    text-align:center;
+    font-weight: lighter;
     }
   </style>
 </head>
 <body>
+    <div class="title">Word Clock</div>
   <div class="grid" id="grid"></div>
-
   <script>
+    
     const data = [
-      [0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 1, 1, 1, 1, 1],
       [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
       [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
       [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
-      [0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
-      [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
-      [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
-      [1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0, 1, 1, 1, 1],
-      [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
-      [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0],
-      [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
-      [0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
       [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
       [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
       [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
-      [1, 1, 1, 0, 1, 1, 1, 1, 1, 1, 1, 1, 0, 1, 1, 1],
-      // Add more rows of 0s and 1s as needed...
+      [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
+      [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
+      [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
+      [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
+      [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
+      [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
+      [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
+      [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
+      [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
+      [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
     ];
 
     const letterArray=[
@@ -73,18 +94,138 @@
     ]
 
 
-    
-    const grid = document.getElementById("grid");
 
+// 在页面加载时创建所有必要的<div>元素
     for (let i = 0; i < data.length; i++) {
-      for (let j = 0; j < data[i].length; j++) {
-        const cell = document.createElement("div");
-        cell.classList.add("cell");
-        cell.textContent = letterArray[i][j];
-        cell.style.color = data[i][j] ? "#212121" : "white";
-        grid.appendChild(cell);
-      }
+  for (let j = 0; j < data[i].length; j++) {
+    const cell = document.createElement("div");
+    cell.classList.add("cell");
+    cell.textContent = letterArray[i][j];
+    cell.style.color = data[i][j] ? "#212121" : "white";
+    grid.appendChild(cell);
+  }
+}
+
+//test
+var minutes = 0;
+
+
+function updateClock() {
+  var currentDate = new Date();
+  var hours = currentDate.getHours();
+//   var minutes = currentDate.getMinutes();
+  var seconds = currentDate.getSeconds();
+// console.log(hours+'时'+minutes+'分'+seconds+'秒')
+
+minutes++;
+if (minutes>59) minutes=0;
+console.log(minutes)
+
+
+//清屏
+for (let i = 0; i < 16; i++) {
+    data[i].fill(1, 0, 16);
+}
+
+//静态内容
+data[0].fill(0, 0, 3);//THE
+data[0].fill(0, 4, 8);//TIME
+data[0].fill(0, 9, 11);//IS
+data[11].fill(0, 0, 6);//OCLOCK
+
+
+console.log()
+
+
+
+//时间段
+if (0<hours && hours<12) {
+    data[11].fill(0, 7, 9);//in
+    data[12].fill(0, 4, 7);//the
+    data[12].fill(0, 8, 15);//Morning
+} else if(11<hours && hours<18) {
+    data[11].fill(0, 7, 9);//in
+    data[12].fill(0, 4, 7);//the
+    data[13].fill(0, 7, 16);//Afternoon
+} else if(17<hours && hours<21) {
+    data[11].fill(0, 7, 9);//in
+    data[12].fill(0, 4, 7);//the
+    data[13].fill(0, 0, 7);//Evening
+} else {
+    data[11].fill(0, 9, 11);//at
+    data[12].fill(0, 0, 5);//night
+}
+
+//小时
+switch (hours) {
+    case 0:case 12:
+        data[9].fill(0, 10, 16);//twelve
+        break;
+    case 1:case 13:
+        data[8].fill(0, 2, 5);//one
+        break;
+    case 2:case 14:
+        data[8].fill(0, 0, 3);//two
+        break;
+    case 3:case 15:
+        data[9].fill(0, 5, 10);//three
+        break;
+    case 4:case 16:
+        data[10].fill(0, 0, 4);//four
+        break;
+    case 5:case 17:
+        data[10].fill(0, 5, 9);//five
+        break;
+    case 6:case 18:
+        data[8].fill(0, 13, 16);//six
+        break;
+    case 7:case 19:
+        data[9].fill(0, 0, 5);//seven
+        break;
+    case 8:case 20:
+        data[10].fill(0, 8, 13);//eight
+        break;
+    case 9:case 21:
+        data[8].fill(0, 9, 13);//nine
+        break;
+    case 10:case 22:
+        data[10].fill(0, 12, 15);//ten
+        break;
+    case 11:case 23:
+        data[8].fill(0, 4, 10);//eleven
+        break;
+    default:
+        break;
+}
+
+//分钟
+
+
+
+
+//秒
+data[15][Math.floor(seconds/10)]=0;
+data[15][Math.floor(seconds%10)+6]=0;
+
+
+// 打印屏幕
+  for (let i = 0; i < data.length; i++) {
+    for (let j = 0; j < data[i].length; j++) {
+      const cell = grid.children[i * data[i].length + j];
+      cell.textContent = letterArray[i][j];
+      cell.style.color = data[i][j] ? "#121212" : "green";
+      cell.style.fontWeight = data[i][j] ? "normal" : "bold";
+      
     }
+  }
+}
+
+// 每秒钟调用一次updateClock函数
+setInterval(updateClock, 1000);
+
+// 初始加载页面时运行一次以显示当前时间
+updateClock();
+
   </script>
 </body>
 </html>
