@@ -353,7 +353,7 @@ data[15][Math.floor(seconds%10)+6]=0;
     for (let j = 0; j < data[i].length; j++) {
       const cell = grid.children[i * data[i].length + j];
       cell.textContent = letterArray[i][j];
-      cell.style.color = data[i][j] ? "#161c26" : "#238636";
+      cell.style.color = data[i][j] ? "#161c26" : "#00FF00";
       cell.style.fontWeight = data[i][j] ? "normal" : "bold";
     }
   }
