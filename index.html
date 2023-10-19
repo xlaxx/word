@@ -11,7 +11,7 @@
     user-select:none;
     }
     body {
-    background-color: black;
+    background-color: #010409;
 
     }
     .grid {
@@ -46,7 +46,7 @@
     left:50%;
     margin:-480px 0px 0px -150px;
     text-align:center;
-    font-weight: lighter;
+    font-weight: normal;
     }
   </style>
 </head>
@@ -213,7 +213,7 @@ data[15][Math.floor(seconds%10)+6]=0;
     for (let j = 0; j < data[i].length; j++) {
       const cell = grid.children[i * data[i].length + j];
       cell.textContent = letterArray[i][j];
-      cell.style.color = data[i][j] ? "#121212" : "green";
+      cell.style.color = data[i][j] ? "#0d1117" : "#238636";
       cell.style.fontWeight = data[i][j] ? "normal" : "bold";
       
     }
