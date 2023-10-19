@@ -11,7 +11,7 @@
     user-select:none;
     }
     body {
-    background-color: #010409;
+    background-color: white;
 
     }
     .grid {
@@ -23,8 +23,14 @@
     position:absolute;
     top:50%;
     left:50%;
-    margin:-480px 0px 0px -480px;
+    margin:-520px 0px 0px -520px;
     zoom: 0.75;
+    /* background-color: #d1d1d1; */
+    background-color: #0D1117;
+    padding: 25px;
+    border: 25px solid #238636;
+    box-shadow: 10px 10px 10px 0px rgba(0,0,0,0.4);
+    border-radius: 10px;
     }
     .cell {
       width: 60px;
@@ -37,24 +43,96 @@
       font-family: Arial
     }
     .title{
-        font-size: 50px;
-        width: 300px;
+      font-size: 50px;
+      width: 300px;
       height: 60px;
-        color: gray;
-        position:absolute;
-    top:50%;
-    left:50%;
-    margin:-480px 0px 0px -150px;
-    text-align:center;
-    font-weight: normal;
+      color: gray;
+      position:absolute;
+      top:50%;
+      left:50%;
+      margin:-480px 0px 0px -150px;
+      text-align:center;
+      font-weight: normal;
+    }
+
+    /* 样式滑动条的外容器 */
+    .slider-container {
+      width: 500px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 20px;
+      background-color: #f0f0f0;
+      border: 0px solid #ccc;
+      border-radius: 10px;
+      box-shadow: 10px 10px 10px 0px rgba(0,0,0,0.4);
+
+      position:absolute;
+      top:50%;
+      left:50%;
+      margin:480px 0px 0px -270px;
+    }
+
+    /* 样式滑动条 */
+    .slider {
+      -webkit-appearance: none;
+      height: 15px;
+      width: 100%;
+      
+      /* height: 10px; */
+      background: black;
+      border-radius: 7.5px;
+      outline: none;
+      opacity: 0.7;
+      -webkit-transition: .2s;
+      transition: opacity .2s;
+      box-shadow: 5px 5px 5px 5px rgba(0,0,0,0.2);
+    }
+
+
+    /* 定制滑块样式 */
+    .slider::-webkit-slider-thumb {
+      box-sizing: border-box;
+      -webkit-appearance: none;
+      appearance: none;
+      width: 20px;
+      height: 20px;
+      background: #238636;
+      border: 15px solid #238636;
+      border-radius: 50%;
+      cursor: pointer;
+    }
+
+    .slider::-moz-range-thumb {
+      width: 20px;
+      height: 20px;
+      background: #238636;
+      border: 2px solid 238636;
+      border-radius: 50%;
+      cursor: pointer;
+    }
+    
+    /* 显示所选时间 */
+    .time-display {
+      font-size: 24px;
+      margin-top: 10px;
     }
   </style>
 </head>
 <body>
-    <div class="title">Word Clock</div>
+
+  <div class="title">Word Clock</div>
   <div class="grid" id="grid"></div>
+
+  <div class="slider-container">
+    <input type="range" class="slider" min="0" max="1439" step="15" value="0" id="timeSlider">
+    <span class="time-display" id="selectedTime">00:00</span>
+  </div>
   <script>
     
+    const timeSlider = document.getElementById("timeSlider");
+    const selectedTime = document.getElementById("selectedTime");
+
     const data = [
       [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
       [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
@@ -95,7 +173,7 @@
 
 
 
-// 在页面加载时创建所有必要的<div>元素
+// 加载<div>阵列
     for (let i = 0; i < data.length; i++) {
   for (let j = 0; j < data[i].length; j++) {
     const cell = document.createElement("div");
@@ -106,20 +184,31 @@
   }
 }
 
-//test
-var minutes = 0;
+var g_hour=0;
+var g_minu=0;
+
+// 处理滑块值改变事件
+timeSlider.addEventListener("input", function() {
+      const minutes = parseInt(this.value);
+      const _hours = Math.floor(minutes / 60);
+      const remainingMinutes = minutes % 60;
+      const timeString = (_hours < 10 ? "0" : "") + _hours + ":" + (remainingMinutes < 10 ? "0" : "") + remainingMinutes;
+      selectedTime.textContent = timeString;
+      //  updateClock(_hours, remainingMinutes);
+      g_hour=_hours;
+      g_minu=remainingMinutes;
+      console.log(g_hour)
+    });
 
 
-function updateClock() {
+function updateClock(ho, mi) {
   var currentDate = new Date();
-  var hours = currentDate.getHours();
-//   var minutes = currentDate.getMinutes();
+  var hours = g_hour;
+  var minutes = g_minu;
+  // var hours = currentDate.getHours();
+  // var minutes = currentDate.getMinutes();
   var seconds = currentDate.getSeconds();
-// console.log(hours+'时'+minutes+'分'+seconds+'秒')
-
-minutes++;
-if (minutes>59) minutes=0;
-console.log(minutes)
+ console.log(hours+'时'+minutes+'分'+seconds+'秒')
 
 
 //清屏
@@ -132,10 +221,6 @@ data[0].fill(0, 0, 3);//THE
 data[0].fill(0, 4, 8);//TIME
 data[0].fill(0, 9, 11);//IS
 data[11].fill(0, 0, 6);//OCLOCK
-
-
-console.log()
-
 
 
 //时间段
@@ -154,6 +239,10 @@ if (0<hours && hours<12) {
 } else {
     data[11].fill(0, 9, 11);//at
     data[12].fill(0, 0, 5);//night
+}
+
+if (minutes>30) {
+  hours=hours+1;
 }
 
 //小时
@@ -199,9 +288,60 @@ switch (hours) {
 }
 
 //分钟
+switch (Math.floor((minutes-1)/5)) {
+    case 0:
+        data[3].fill(0, 8, 12);//5  FiVE 
+        data[7].fill(0, 8, 12);//PAST  
+        break;
+    case 1:
+        data[2].fill(0, 0, 3);//10  TEN
+        data[7].fill(0, 8, 12);//PAST 
+        break;
+    case 2:
 
-
-
+        data[0].fill(0, 13, 14);//A
+        data[1].fill(0, 0, 7);//15  A QUARTER
+        data[7].fill(0, 8, 12);//PAST 
+        break;
+    case 3:
+        data[1].fill(0, 7, 13);//20  TWENTY
+        data[7].fill(0, 8, 12);//PAST 
+        break;
+    case 4:
+        data[1].fill(0, 7, 13);//TWENTY
+        data[3].fill(0, 8, 12)//25  TWENTY FIVE
+        data[7].fill(0, 8, 12);//PAST 
+        break;
+    case 5:
+        data[0].fill(0, 12, 16);//30  HALF
+        data[7].fill(0, 8, 12);//PAST 
+        break;
+    case 6:
+        data[1].fill(0, 7, 13);//TWENTY
+        data[3].fill(0, 8, 12);//35  TWENTY FIVE
+        data[7].fill(0, 11, 13);//TO 
+        break;
+    case 7:
+        data[1].fill(0, 7, 13);//40  TWENTY
+        data[7].fill(0, 11, 13);//TO 
+        break;
+    case 8:
+        data[0].fill(0, 13, 14);//A
+        data[1].fill(0, 0, 7);//45  A QUARTER
+        data[7].fill(0, 11, 13);//TO 
+        break;
+    case 9:
+        data[2].fill(0, 0, 3);//50  TEN
+        data[7].fill(0, 11, 13);//TO 
+        break;
+    case 10:
+        data[3].fill(0, 8, 12);//55  FIVE
+        data[7].fill(0, 11, 13);//TO 
+        break;
+    default:
+        data[7].fill(0, 8, 12);//PAST 
+        break;
+}
 
 //秒
 data[15][Math.floor(seconds/10)]=0;
@@ -213,9 +353,8 @@ data[15][Math.floor(seconds%10)+6]=0;
     for (let j = 0; j < data[i].length; j++) {
       const cell = grid.children[i * data[i].length + j];
       cell.textContent = letterArray[i][j];
-      cell.style.color = data[i][j] ? "#0d1117" : "#238636";
+      cell.style.color = data[i][j] ? "#161c26" : "#238636";
       cell.style.fontWeight = data[i][j] ? "normal" : "bold";
-      
     }
   }
 }
